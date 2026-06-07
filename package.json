@@ -1,0 +1,17 @@
+{
+  "name": "vasculog-backend",
+  "version": "1.0.0",
+  "description": "VascuLog API proxy server",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

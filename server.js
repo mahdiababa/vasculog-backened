@@ -6,6 +6,7 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
+app.options("*", cors());
 app.use(express.json());
 
 // POST /api/anthropic — proxy to Anthropic Messages API

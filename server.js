@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
-
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -9,18 +8,16 @@ app.use(cors());
 app.options("*", cors());
 app.use(express.json());
 
-// POST /api/anthropic — proxy to Anthropic Messages API
+const ANTHROPIC_KEY = process.env.ANTHROPIC_KEY;
+const OPENAI_KEY = process.env.OPENAI_KEY;
+
 app.post("/api/anthropic", async (req, res) => {
-  const apiKey = req.headers["x-api-key"];
-  if (!apiKey) {
-    return res.status(400).json({ error: "Missing x-api-key header" });
-  }
   try {
     const upstream = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
+        "x-api-key": ANTHROPIC_KEY,
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify(req.body),
@@ -33,12 +30,7 @@ app.post("/api/anthropic", async (req, res) => {
   }
 });
 
-// POST /api/openai-transcribe — proxy to OpenAI Whisper API
 app.post("/api/openai-transcribe", upload.single("file"), async (req, res) => {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) {
-    return res.status(400).json({ error: "Missing Authorization header" });
-  }
   if (!req.file) {
     return res.status(400).json({ error: "Missing audio file" });
   }
@@ -50,12 +42,11 @@ app.post("/api/openai-transcribe", upload.single("file"), async (req, res) => {
       req.file.originalname || "audio.webm"
     );
     form.append("model", req.body.model || "whisper-1");
-
     const upstream = await fetch(
       "https://api.openai.com/v1/audio/transcriptions",
       {
         method: "POST",
-        headers: { Authorization: authHeader },
+        headers: { Authorization: `Bearer ${OPENAI_KEY}` },
         body: form,
       }
     );
@@ -67,5 +58,5 @@ app.post("/api/openai-transcribe", upload.single("file"), async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

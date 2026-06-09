@@ -58,5 +58,21 @@ app.post("/api/openai-transcribe", upload.single("file"), async (req, res) => {
   }
 });
 
+app.post("/api/sheets-sync", async (req, res) => {
+  try {
+    const sheetsUrl = process.env.SHEETS_URL;
+    const upstream = await fetch(sheetsUrl, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(req.body)
+    });
+    const text = await upstream.text();
+    res.status(200).json({success: true});
+  } catch(err) {
+    console.error("Sheets sync error:", err);
+    res.status(502).json({error: "Sheets sync failed"});
+  }
+});
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

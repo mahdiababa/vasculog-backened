@@ -8,8 +8,8 @@ app.use(cors());
 app.options("*", cors());
 app.use(express.json());
 
-const ANTHROPIC_KEY = process.env.ANTHROPIC_KEY;
-const OPENAI_KEY = process.env.OPENAI_KEY;
+const ANTHROPIC_KEY = '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';
+const OPENAI_KEY = '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';
 
 app.post("/api/anthropic", async (req, res) => {
   try {
@@ -60,7 +60,8 @@ app.post("/api/openai-transcribe", upload.single("file"), async (req, res) => {
 
 app.post("/api/sheets-sync", async (req, res) => {
   try {
-    const sheetsUrl = process.env.SHEETS_URL;
+    const ANTHROPIC_KEY = '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';
+const sheetsUrl = 'https://script.google.com/macros/s/AKfycbw3uLa5sbh7q_1hRDTei1urzN2woERBdsR2TzW2GVGGt0lNkNznk1yyAFkUwth-Q8Ke/exec';
     const upstream = await fetch(sheetsUrl, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
